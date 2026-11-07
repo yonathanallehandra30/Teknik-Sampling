@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Panduan Metode Sampling — Profesional</title>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+<style>
+  :root {
+    --primary:#1e3a8a; --primary-light:#2563eb; --accent:#0ea5e9;
+    --bg:#f1f5f9; --card:#ffffff; --text:#1e293b; --muted:#64748b;
+    --border:#e2e8f0; --success:#059669; --warn:#d97706;
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  html { scroll-behavior:smooth; }
+  body { font-family:'Inter',sans-serif; background:var(--bg); color:var(--text); line-height:1.7; font-size:15px; }
+
+  /* Sticky header */
+  .topbar { position:sticky; top:0; z-index:50; background:#fff; border-bottom:1px solid var(--border); box-shadow:0 2px 12px rgba(0,0,0,.04); }
+  .topbar-inner { max-width:1240px; margin:0 auto; padding:12px 20px; display:flex; align-items:center; justify-content:space-between; gap:12px; }
+  .brand { display:flex; align-items:center; gap:10px; }
+  .brand .logo { width:36px; height:36px; border-radius:8px; background:linear-gradient(135deg,var(--primary),var(--primary-light)); color:#fff; display:flex; align-items:center; justify-content:center; font-size:16px; }
+  .brand h1 { font-size:17px; font-weight:700; color:var(--primary); }
+  .brand small { font-size:11px; color:var(--muted); display:block; }
+  .toc { display:flex; gap:6px; flex-wrap:wrap; }
+  .toc a { font-size:12px; color:var(--muted); text-decoration:none; padding:4px 10px; border-radius:6px; transition:.2s; }
+  .toc a:hover { background:#eff6ff; color:var(--primary-light); }
+
+  .wrap { max-width:1240px; margin:0 auto; padding:24px 20px 40px; }
+
+  /* Hero */
+  .hero { background:linear-gradient(135deg,var(--primary) 0%, var(--primary-light) 60%, var(--accent) 100%); color:#fff; padding:40px 32px; border-radius:14px; margin-bottom:24px; box-shadow:0 12px 40px rgba(30,58,138,.25); position:relative; overflow:hidden; }
+  .hero::after { content:''; position:absolute; right:-60px; top:-60px; width:220px; height:220px; background:rgba(255,255,255,.08); border-radius:50%; }
+  .hero h2 { font-size:26px; font-weight:700; margin-bottom:8px; }
+  .hero p { max-width:760px; opacity:.92; font-size:14px; }
+  .hero .chips { margin-top:14px; display:flex; gap:8px; flex-wrap:wrap; }
+  .chip { background:rgba(255,255,255,.18); padding:4px 12px; border-radius:999px; font-size:11px; font-weight:600; backdrop-filter:blur(4px); }
+
+  /* Grid */
+  .grid { display:grid; grid-template-columns:repeat(3,1fr); gap:18px; }
+  @media (max-width:1000px){ .grid{ grid-template-columns:repeat(2,1fr);} }
+  @media (max-width:640px){ .grid{ grid-template-columns:1fr;} }
+
+  /* Card */
+  .card { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:20px; box-shadow:0 2px 10px rgba(0,0,0,.04); transition:transform .2s, box-shadow .2s; }
+  .card:hover { transform:translateY(-2px); box-shadow:0 8px 24px rgba(0,0,0,.06); }
+  .card h3 { font-size:16px; color:var(--primary); margin-bottom:10px; display:flex; align-items:center; gap:8px; padding-bottom:8px; border-bottom:1px solid var(--border); }
+  .card h3 i { color:var(--primary-light); }
+  .card p { font-size:14px; margin:8px 0; }
+  .card .muted { color:var(--muted); font-size:12px; }
+  .full { grid-column:1/-1; }
+
+  /* Accordion */
+  .acc { border:1px solid var(--border); border-radius:8px; margin:8px 0; background:#fafbfc; overflow:hidden; transition:all .2s; }
+  .acc-head { display:flex; justify-content:space-between; align-items:center; padding:10px 14px; cursor:pointer; font-size:13.5px; font-weight:600; color:var(--text); user-select:none; }
+  .acc-head:hover { background:#f1f5f9; }
+  .acc-head i { color:var(--primary-light); transition:transform .25s; }
+  .acc.open .acc-head i { transform:rotate(90deg); }
+  .acc-body { max-height:0; overflow:hidden; transition:max-height .3s ease; padding:0 14px; font-size:13.5px; background:#fff; }
+  .acc.open .acc-body { max-height:600px; padding:12px 14px; border-top:1px solid var(--border); }
+  .acc-body b { color:var(--primary); }
+
+  /* Tags */
+  .tag { display:inline-block; padding:2px 8px; border-radius:4px; font-size:10px; font-weight:700; margin-left:6px; vertical-align:middle; }
+  .tag.prob { background:#dbeafe; color:#1d4ed8; }
+  .tag.nonprob { background:#fce7f3; color:#be185d; }
+  .tag.key { background:#fef3c7; color:#92400e; }
+
+  /* Tree */
+  .tree ul { list-style:none; padding-left:20px; }
+  .tree li { position:relative; padding:4px 0 4px 16px; font-size:13.5px; }
+  .tree li::before { content:''; position:absolute; left:0; top:0; width:12px; height:16px; border-left:1px solid #cbd5e1; border-bottom:1px solid #cbd5e1; border-bottom-left-radius:4px; }
+  .tree li:last-child::before { border-left:none; }
+  .tree > ul { padding-left:0; }
+  .tree > ul > li::before { display:none; }
+
+  /* Tables */
+  table { width:100%; border-collapse:collapse; font-size:13px; margin:8px 0; }
+  th, td { border:1px solid var(--border); padding:8px 10px; }
+  th { background:#eff6ff; color:var(--primary); font-weight:600; text-align:left; }
+  tr:nth-child(even) td { background:#f8fafc; }
+  tr:hover td { background:#f1f5f9; }
+
+  /* Formula */
+  .formula { background:#f8fafc; border-left:4px solid var(--primary-light); padding:10px 14px; margin:10px 0; font-family:'JetBrains Mono',monospace; font-size:13px; border-radius:6px; }
+
+  /* Flowchart */
+  .flow { display:flex; flex-direction:column; gap:8px; }
+  .flow-step { display:flex; align-items:center; gap:10px; padding:10px 14px; background:#f8fafc; border:1px solid var(--border); border-radius:8px; font-size:13.5px; }
+  .flow-step .num { width:26px; height:26px; border-radius:50%; background:var(--primary-light); color:#fff; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700; flex-shrink:0; }
+  .flow-step i { color:var(--primary-light); }
+
+  /* Footer */
+  footer { background:var(--primary); color:#fff; padding:20px; border-radius:12px; text-align:center; font-size:13px; margin-top:24px; box-shadow:0 4px 16px rgba(30,58,138,.15); }
+  footer .sub { opacity:.8; font-size:11px; margin-top:4px; }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width:8px; height:8px; }
+  ::-webkit-scrollbar-thumb { background:#cbd5e1; border-radius:8px; }
+  ::-webkit-scrollbar-thumb:hover { background:#94a3b8; }
+
+  .section-title { font-size:18px; font-weight:700; color:var(--primary); margin:24px 0 12px; display:flex; align-items:center; gap:8px; }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="topbar-inner">
+    <div class="brand">
+      <div class="logo"><i class="fa-solid fa-sitemap"></i></div>
+      <div>
+        <h1>Panduan Metode Sampling</h1>
+        <small>Untuk semua jenis penelitian · UI profesional</small>
+      </div>
+    </div>
+    <nav class="toc">
+      <a href="#konsep">Konsep</a>
+      <a href="#variabel">Variabel</a>
+      <a href="#tree">Tree</a>
+      <a href="#metode">Metode</a>
+      <a href="#rumus">Rumus</a>
+      <a href="#bias">Bias</a>
+      <a href="#kualitatif">Kualitatif</a>
+      <a href="#flow">Alur</a>
+      <a href="#ref">Referensi</a>
+    </nav>
+  </div>
+</div>
+
+<div class="wrap">
+  <section class="hero">
+    <h2>Panduan Metode Sampling untuk Semua Penelitian</h2>
+    <p>Pohon keputusan, keterangan makna variabel, rumus ukuran sampel, contoh kasus, bias sampling, sampling kualitatif, serta referensi. Dirancang untuk belajar dan pemilihan metode yang tepat.</p>
+    <div class="chips">
+      <span class="chip"><i class="fa-solid fa-sitemap"></i> Tree Chart</span>
+      <span class="chip"><i class="fa-solid fa-key"></i> Variabel</span>
+      <span class="chip"><i class="fa-solid fa-calculator"></i> Rumus</span>
+      <span class="chip"><i class="fa-solid fa-book"></i> Referensi Sugiyono</span>
+    </div>
+  </section>
+
+  <div class="grid">
+    <!-- Konsep -->
+    <div class="card" id="konsep">
+      <h3><i class="fa-solid fa-book-open"></i> Konsep Dasar</h3>
+      <div class="acc"><div class="acc-head" onclick="toggle(this)"><span>Populasi (N) & Sampel (n)</span><i class="fa-solid fa-caret-right"></i></div>
+        <div class="acc-body"><b>Populasi:</b> seluruh objek/individu sasaran. <b>Sampel:</b> bagian populasi yang diteliti. Sampling karena keterbatasan waktu, biaya, tenaga.</div></div>
+      <div class="acc"><div class="acc-head" onclick="toggle(this)"><span>Parameter vs Statistik</span><i class="fa-solid fa-caret-right"></i></div>
+        <div class="acc-body"><b>Parameter:</b> nilai populasi (μ, σ, P). <b>Statistik:</b> nilai dari sampel (x̄, s, p). Sampling error = selisih statistik & parameter.</div></div>
+      <div class="acc"><div class="acc-head" onclick="toggle(this)"><span>Sampling Frame & Representatif</span><i class="fa-solid fa-caret-right"></i></div>
+        <div class="acc-body"><b>Frame:</b> daftar lengkap anggota populasi. <b>Representatif:</b> sampel mewakili karakteristik populasi.</div></div>
+    </div>
+
+    <!-- Variabel -->
+    <div class="card" id="variabel">
+      <h3><i class="fa-solid fa-key"></i> Makna Variabel</h3>
+      <div class="acc"><div class="acc-head" onclick="toggle(this)"><span>N, n, P, p, Q</span><i class="fa-solid fa-caret-right"></i></div>
+        <div class="acc-body">N=ukuran populasi; n=ukuran sampel; P=proporsi populasi; p=proporsi sampel; Q=1−P.</div></div>
+      <div class="acc"><div class="acc-head" onclick="toggle(this)"><span>μ, x̄, σ, s</span><i class="fa-solid fa-caret-right"></i></div>
+        <div class="acc-body">μ=rata-rata populasi; x̄=rata-rata sampel; σ=simpangan baku populasi; s=simpangan baku sampel.</div></div>
+      <div class="acc"><div class="acc-head" onclick="toggle(this)"><span>Z, t, e/d, α</span><i class="fa-solid fa-caret-right"></i></div>
+        <div class="acc-body">Z=skor normal (1.96 untuk 95%); t=skor t; e/d=margin of error; α=tingkat signifikansi (0.05); 1−α=tingkat kepercayaan.</div></div>
+      <div class="acc"><div class="acc-head" onclick="toggle(this)"><span>k, m, DEFF, ICC</span><i class="fa-solid fa-caret-right"></i></div>
+        <div class="acc-body">k=interval sistematis (N/n); m=jumlah cluster/strata; DEFF=design effect; ICC=korelasi dalam cluster.</div></div>
+    </div>
+
+    <!-- Tree -->
+    <div class="card" id="tree">
+      <h3><i class="fa-solid fa-sitemap"></i> Tree Chart Sampling</h3>
+      <div class="tree">
+        <ul>
+          <li>Metode Sampling
+            <ul>
+              <li>Probabilitas <span class="tag prob">P</span>
+                <ul>
+                  <li><div class="acc"><div class="acc-head" onclick="toggle(this)"><span>Simple Random</span><i class="fa-solid fa-caret-right"></i></div><div class="acc-body"><b>Ket:</b> Setiap anggota peluang sama terpilih. <b>Contoh:</b> 500 mahasiswa, pilih 50 secara undian/acak.</div></div></li>
+                  <li><div class="acc"><div class="acc-head" onclick="toggle(this)"><span>Systematic</span><i class="fa-solid fa-caret-right"></i></div><div class="acc-body"><b>Ket:</b> Interval k=N/n dari start acak. <b>Contoh:</b> 1000 nama, k=20, start 7 → 7,27,47,...</div></div></li>
+                  <li><div class="acc"><div class="acc-head" onclick="toggle(this)"><span>Stratified</span><i class="fa-solid fa-caret-right"></i></div><div class="acc-body"><b>Ket:</b> Strata homogen, sampel tiap strata. <b>Contoh:</b> mahasiswa per fakultas, proporsional.</div></div></li>
+                  <li><div class="acc"><div class="acc-head" onclick="toggle(this)"><span>Cluster</span><i class="fa-solid fa-caret-right"></i></div><div class="acc-body"><b>Ket:</b> Cluster heterogen, pilih beberapa. <b>Contoh:</b> pilih 5 sekolah, teliti semua siswanya.</div></div></li>
+                  <li><div class="acc"><div class="acc-head" onclick="toggle(this)"><span>Multistage</span><i class="fa-solid fa-caret-right"></i></div><div class="acc-body"><b>Ket:</b> Beberapa tahap. <b>Contoh:</b> provinsi → kabupaten → kecamatan → desa.</div></div></li>
+                  <li><div class="acc"><div class="acc-head" onclick="toggle(this)"><span>PPS</span><i class="fa-solid fa-caret-right"></i></div><div class="acc-body"><b>Ket:</b> Peluang proporsional ukuran unit. <b>Contoh:</b> desa besar peluang lebih besar.</div></div></li>
+                </ul></li>
+              <li>Non-Probabilitas <span class="tag nonprob">NP</span>
+                <ul>
+                  <li><div class="acc"><div class="acc-head" onclick="toggle(this)"><span>Purposive</span><i class="fa-solid fa-caret-right"></i></div><div class="acc-body"><b>Ket:</b> Pilih berdasarkan kriteria. <b>Contoh:</b> guru pengalaman >10 thn.</div></div></li>
+                  <li><div class="acc"><div class="acc-head" onclick="toggle(this)"><span>Quota</span><i class="fa-solid fa-caret-right"></i></div><div class="acc-body"><b>Ket:</b> Kuota per karakteristik. <b>Contoh:</b> 50 pria & 50 wanita.</div></div></li>
+                  <li><div class="acc"><div class="acc-head" onclick="toggle(this)"><span>Convenience</span><i class="fa-solid fa-caret-right"></i></div><div class="acc-body"><b>Ket:</b> Mudah dijangkau. <b>Contoh:</b> survei di kantin kampus.</div></div></li>
+                  <li><div class="acc"><div class="acc-head" onclick="toggle(this)"><span>Snowball</span><i class="fa-solid fa-caret-right"></i></div><div class="acc-body"><b>Ket:</b> Responden merekomendasikan lain. <b>Contoh:</b> pengguna narkoba (tersembunyi).</div></div></li>
+                  <li><div class="acc"><div class="acc-head" onclick="toggle(this)"><span>Judgmental</span><i class="fa-solid fa-caret-right"></i></div><div class="acc-body"><b>Ket:</b> Berdasarkan penilaian ahli. <b>Contoh:</b> pakar pilih responden kunci.</div></div></li>
+                  <li><div class="acc"><div class="acc-head" onclick="toggle(this)"><span>Volunteer</span><i class="fa-solid fa-caret-right"></i></div><div class="acc-body"><b>Ket:</b> Sukarela. <b>Contoh:</b> isi kuesioner online sukarela.</div></div></li>
+                </ul></li>
+              <li>Mixed/Khusus
+                <ul>
+                  <li><div class="acc"><div class="acc-head" onclick="toggle(this)"><span>Stratified+Cluster</span><i class="fa-solid fa-caret-right"></i></div><div class="acc-body"><b>Ket:</b> Gabungan. <b>Contoh:</b> strata provinsi lalu cluster kabupaten.</div></div></li>
+                  <li><div class="acc"><div class="acc-head" onclick="toggle(this)"><span>Time/Location</span><i class="fa-solid fa-caret-right"></i></div><div class="acc-body"><b>Ket:</b> Berdasarkan waktu/lokasi. <b>Contoh:</b> survei di mal jam tertentu.</div></div></li>
+                  <li><div class="acc"><div class="acc-head" onclick="toggle(this)"><span>RDS</span><i class="fa-solid fa-caret-right"></i></div><div class="acc-body"><b>Ket:</b> Jejaring dengan insentif. <b>Contoh:</b> populasi tersembunyi dengan rujukan.</div></div></li>
+                </ul></li>
+            </ul></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Metode detail -->
+    <div class="card" id="metode">
+      <h3><i class="fa-solid fa-list-check"></i> Detail Metode</h3>
+      <div class="acc"><div class="acc-head" onclick="toggle(this)"><span>Simple Random <span class="tag prob">P</span></span><i class="fa-solid fa-caret-right"></i></div>
+        <div class="acc-body">Setiap anggota peluang sama. Butuh frame lengkap. Tidak bias, kurang efisien untuk populasi heterogen.</div></div>
+      <div class="acc"><div class="acc-head" onclick="toggle(this)"><span>Systematic <span class="tag prob">P</span></span><i class="fa-solid fa-caret-right"></i></div>
+        <div class="acc-body">k=N/n; start acak r. Hindari jika populasi periodik (cyclic).</div></div>
+      <div class="acc"><div class="acc-head" onclick="toggle(this)"><span>Stratified <span class="tag prob">P</span></span><i class="fa-solid fa-caret-right"></i></div>
+        <div class="acc-body">n_h=(N_h/N)·n (proporsional). Meningkatkan presisi bila strata berbeda.</div></div>
+      <div class="acc"><div class="acc-head" onclick="toggle(this)"><span>Cluster <span class="tag prob">P</span></span><i class="fa-solid fa-caret-right"></i></div>
+        <div class="acc-body">Cluster heterogen. One-stage: semua anggota; two-stage: pilih anggota. Koreksi varians dengan DEFF.</div></div>
+      <div class="acc"><div class="acc-head" onclick="toggle(this)"><span>Purposive <span class="tag nonprob">NP</span></span><i class="fa-solid fa-caret-right"></i></div>
+        <div class="acc-body">Pilih berdasarkan kriteria. Risiko bias seleksi; tidak dapat digeneralisasi statistik.</div></div>
+      <div class="acc"><div class="acc-head" onclick="toggle(this)"><span>Quota <span class="tag nonprob">NP</span></span><i class="fa-solid fa-caret-right"></i></div>
+        <div class="acc-body">Kuota per karakteristik, pilih bebas sampai terpenuhi.</div></div>
+      <div class="acc"><div class="acc-head" onclick="toggle(this)"><span>Convenience <span class="tag nonprob">NP</span></span><i class="fa-solid fa-caret-right"></i></div>
+        <div class="acc-body">Mudah dijangkau. Cepat & murah, risiko bias tinggi.</div></div>
+      <div class="acc"><div class="acc-head" onclick="toggle(this)"><span>Snowball <span class="tag nonprob">NP</span></span><i class="fa-solid fa-caret-right"></i></div>
+        <div class="acc-body">Responden awal merekomendasikan lain. Cocok populasi tersembunyi.</div></div>
+    </div>
+
+    <!-- Rumus -->
+    <div class="card" id="rumus">
+      <h3><i class="fa-solid fa-calculator"></i> Rumus Ukuran Sampel</h3>
+      <div class="acc"><div class="acc-head" onclick="toggle(this)"><span>Slovin (N diketahui)</span><i class="fa-solid fa-caret-right"></i></div>
+        <div class="acc-body"><div class="formula">n = N / (1 + N·e²)</div>Contoh: N=1000, e=0.05 → n=286.</div></div>
+      <div class="acc"><div class="acc-head" onclick="toggle(this)"><span>Cochran (proporsi)</span><i class="fa-solid fa-caret-right"></i></div>
+        <div class="acc-body"><div class="formula">n₀ = Z²·P·Q / e²</div>Terbatas: n=n₀/(1+(n₀−1)/N). Default P=0.5.</div></div>
+      <div class="acc"><div class="acc-head" onclick="toggle(this)"><span>Krejcie & Morgan</span><i class="fa-solid fa-caret-right"></i></div>
+        <div class="acc-body"><div class="formula">n = χ²·N·P·Q / (d²·(N−1)+χ²·P·Q)</div></div></div>
+      <div class="acc"><div class="acc-head" onclick="toggle(this)"><span>Lemeshow (kesehatan)</span><i class="fa-solid fa-caret-right"></i></div>
+        <div class="acc-body"><div class="formula">n = Z²·P·(1−P) / d²</div></div></div>
+      <div class="acc"><div class="acc-head" onclick="toggle(this)"><span>Yamane</span><i class="fa-solid fa-caret-right"></i></div>
+        <div class="acc-body"><div class="formula">n = N / (1 + N·e²)</div>Sama dengan Slovin; e=0.05 atau 0.10.</div></div>
+    </div>
+
+    <!-- Bias -->
+    <div class="card" id="bias">
+      <h3><i class="fa-solid fa-triangle-exclamation"></i> Bias Sampling</h3>
+      <div class="acc"><div class="acc-head" onclick="toggle(this)"><span>Selection Bias</span><i class="fa-solid fa-caret-right"></i></div>
+        <div class="acc-body">Sampel tidak mewakili populasi karena cara pemilihan. <b>Contoh:</b> hanya survei di kota besar.</div></div>
+      <div class="acc"><div class="acc-head" onclick="toggle(this)"><span>Non-response Bias</span><i class="fa-solid fa-caret-right"></i></div>
+        <div class="acc-body">Responden yang tidak menjawab berbeda karakteristik. <b>Contoh:</b> yang puas lebih cenderung menjawab.</div></div>
+      <div class="acc"><div class="acc-head" onclick="toggle(this)"><span>Measurement Bias</span><i class="fa-solid fa-caret-right"></i></div>
+        <div class="acc-body">Instrumen/pertanyaan tidak valid. <b>Contoh:</b> pertanyaan leading.</div></div>
+      <div class="acc"><div class="acc-head" onclick="toggle(this)"><span>Undercoverage</span><i class="fa-solid fa-caret-right"></i></div>
+        <div class="acc-body">Sebagian populasi tidak masuk frame. <b>Contoh:</b> tanpa nomor telepon tidak terjangkau.</div></div>
+    </div>
+
+    <!-- Kualitatif -->
+    <div class="card" id="kualitatif">
+      <h3><i class="fa-solid fa-comments"></i> Sampling Kualitatif</h3>
+      <div class="acc"><div class="acc-head" onclick="toggle(this)"><span>Purposive Variants</span><i class="fa-solid fa-caret-right"></i></div>
+        <div class="acc-body">Maximum variation, homogeneous, theory-based, extreme case, intensity, critical case, typical case.</div></div>
+      <div class="acc"><div class="acc-head" onclick="toggle(this)"><span>Saturation (Data Saturation)</span><i class="fa-solid fa-caret-right"></i></div>
+        <div class="acc-body">Pengumpulan data sampai tidak ada informasi baru. <b>Contoh:</b> wawancara sampai jawaban berulang.</div></div>
+      <div class="acc"><div class="acc-head" onclick="toggle(this)"><span>Snowball / Chain Referral</span><i class="fa-solid fa-caret-right"></i></div>
+        <div class="acc-body">Untuk populasi tersembunyi/rentan. <b>Contoh:</b> jaringan komunitas.</div></div>
+    </div>
+
+    <!-- Pemilihan -->
+    <div class="card" id="pemilihan">
+      <h3><i class="fa-solid fa-compass"></i> Pemilihan Metode</h3>
+      <div class="acc"><div class="acc-head" onclick="toggle(this)"><span>Tabel Kondisi → Metode</span><i class="fa-solid fa-caret-right"></i></div>
+        <div class="acc-body">
+          <table>
+            <tr><th>Kondisi</th><th>Metode</th></tr>
+            <tr><td>Homogen, frame lengkap</td><td>Simple Random</td></tr>
+            <tr><td>Besar, data terurut</td><td>Systematic</td></tr>
+            <tr><td>Subkelompok penting</td><td>Stratified</td></tr>
+            <tr><td>Tersebar luas, biaya tinggi</td><td>Cluster/Multistage</td></tr>
+            <tr><td>Populasi tersembunyi</td><td>Snowball/RDS</td></tr>
+            <tr><td>Eksploratif/kualitatif</td><td>Purposive/Judgmental</td></tr>
+            <tr><td>Survei cepat kuota</td><td>Quota/Convenience</td></tr>
+          </table>
+        </div></div>
+    </div>
+  </div>
+
+  <!-- Flow -->
+  <div class="section-title" id="flow"><i class="fa-solid fa-diagram-project"></i> Alur Pemilihan Metode Sampling</div>
+  <div class="card full">
+    <div class="flow">
+      <div class="flow-step"><span class="num">1</span><i class="fa-solid fa-users"></i> Tentukan populasi & sampling frame</div>
+      <div class="flow-step"><span class="num">2</span><i class="fa-solid fa-bullseye"></i> Tentukan tujuan & jenis penelitian (kuantitatif/kualitatif/mixed)</div>
+      <div class="flow-step"><span class="num">3</span><i class="fa-solid fa-scale-balanced"></i> Pilih probabilitas vs non-probabilitas</div>
+      <div class="flow-step"><span class="num">4</span><i class="fa-solid fa-layer-group"></i> Pilih metode spesifik (SRS, stratified, cluster, purposive, dll.)</div>
+      <div class="flow-step"><span class="num">5</span><i class="fa-solid fa-calculator"></i> Hitung ukuran sampel (Slovin/Cochran/dll.)</div>
+      <div class="flow-step"><span class="num">6</span><i class="fa-solid fa-clipboard-check"></i> Cek representatif & bias, lalu validasi</div>
+    </div>
+  </div>
+
+  <!-- Referensi -->
+  <div class="section-title" id="ref"><i class="fa-solid fa-book"></i> Referensi</div>
+  <div class="card full">
+    <div class="acc"><div class="acc-head" onclick="toggle(this)"><span>Daftar Pustaka (klik untuk buka)</span><i class="fa-solid fa-caret-right"></i></div>
+      <div class="acc-body">
+        <ol>
+          <li>Babbie, E. (2016). The Practice of Social Research (14th ed.). Cengage.</li>
+          <li>Cochran, W. G. (1977). Sampling Techniques (3rd ed.). Wiley.</li>
+          <li>Krejcie, R. V., & Morgan, D. W. (1970). Determining sample size. Educational and Psychological Measurement, 30(3), 607–610.</li>
+          <li>Lemeshow, S. et al. (1990). Adequacy of Sample Size in Health Studies. WHO/Wiley.</li>
+          <li>Lohr, S. L. (2010). Sampling: Design and Analysis (2nd ed.). Brooks/Cole.</li>
+          <li>Slovin, E. (1960). Slovin's Formula for Sampling Technique.</li>
+          <li>Sugiyono. (2009). Metode Penelitian Kuantitatif, Kualitatif dan R&D. Alfabeta.</li>
+          <li>Sugiyono. (2013). Metode Penelitian Kuantitatif, Kualitatif dan R&D (17th ed.). Alfabeta.</li>
+          <li>Sugiyono. (2015). Metodologi Penelitian (Kuantitatif, Kualitatif dan Kombinasi). Alfabeta.</li>
+          <li>Sugiyono. (2017). Metode Penelitian Kuantitatif, Kualitatif, dan R&D. Alfabeta.</li>
+          <li>Sugiyono. (2017). Statistika untuk Penelitian. Alfabeta.</li>
+          <li>Sugiyono. (2019). Metode Penelitian Kuantitatif, Kualitatif, dan R&D (2nd ed.). Alfabeta.</li>
+          <li>Yamane, T. (1967). Statistics: An Introductory Analysis (2nd ed.). Harper & Row.</li>
+        </ol>
+      </div></div>
+  </div>
+
+  <footer>
+    Panduan Metode Sampling — WebStat Pro · untuk belajar & penelitian
+    <div class="sub">Sumber utama: Prof. Sugiyono, Metodologi/Metode Penelitian (berbagai edisi).</div>
+  </footer>
+</div>
+
+<script>
+  function toggle(head) {
+    const acc = head.parentElement;
+    acc.classList.toggle('open');
+  }
+</script>
+</body>
+</html>
